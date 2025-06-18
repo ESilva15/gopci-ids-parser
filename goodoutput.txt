@@ -1,0 +1,56 @@
+↓ 0x0001  SafeNet (wrong ID)
+↓ 0x0010  Allied Telesis, Inc (Wrong ID)
+↓>>>> 0x8139  AT-2500TX V3 Ethernet
+↓ 0x0014  Loongson Technology LLC
+↓>>>> 0x7a00  Hyper Transport Bridge Controller
+↓>>>> 0x7a0f  DMA (Direct Memory Access) Controller
+↓>>>> 0x7a10  Hyper Transport Bridge Controller
+↓>>>> 0x7a24  OHCI USB Controller
+↓>>>> 0x7a25  LG100 GPU
+↓>>>> 0x7a34  xHCI USB Controller
+↓>>>> 0x7a36  Display Controller
+↓>>>> 0x7a69  PCIe x16 Root Port
+↓ 0x0018  Fn-Link Technology Limited
+↓>>>> 0x6252  6252CPUB 802.11ax PCIe Wireless Network Adapter
+↓ 0x001c  PEAK-System Technik GmbH
+↓>>>> 0x0001  PCAN-PCI CAN-Bus controller
+↓>>>>>>>> 0x001c 0x0004 2 Channel CAN Bus SJC1000
+↓>>>>>>>> 0x001c 0x0005 2 Channel CAN Bus SJC1000 (Optically Isolated)
+↓ 0x003d  Lockheed Martin-Marietta Corp
+↓ 0x005e  Inexistant Vendor
+| 0x0000  Unclassified device
+|---- 0x0000  Non-VGA unclassified device
+|---- 0x0001  VGA compatible unclassified device
+|---- 0x0005  Image coprocessor
+| 0x0001  Mass storage controller
+|---- 0x0000  SCSI storage controller
+|---- 0x0001  IDE interface
+|-------- 0x0000  ISA Compatibility mode-only controller
+|-------- 0x0005  PCI native mode-only controller
+|-------- 0x000a  ISA Compatibility mode controller, supports both channels switched to PCI native mode
+|-------- 0x000f  PCI native mode controller, supports both channels switched to ISA compatibility mode
+|-------- 0x008f  PCI native mode controller, supports both channels switched to ISA compatibility mode, supports bus mastering
+|---- 0x0002  Floppy disk controller
+|---- 0x0003  IPI bus controller
+|---- 0x0004  RAID bus controller
+|---- 0x0005  ATA controller
+|-------- 0x0020  ADMA single stepping
+|-------- 0x0030  ADMA continuous operation
+|---- 0x0006  SATA controller
+|-------- 0x0000  Vendor specific
+|-------- 0x0001  AHCI 1.0
+|-------- 0x0002  Serial Storage Bus
+|---- 0x0007  Serial Attached SCSI controller
+|-------- 0x0001  Serial Storage Bus
+|---- 0x0008  Non-Volatile memory controller
+|-------- 0x0001  NVMHCI
+|-------- 0x0002  NVM Express
+|---- 0x0009  Universal Flash Storage controller
+|-------- 0x0000  Vendor specific
+|-------- 0x0001  UFSHCI
+|---- 0x0080  Mass storage controller
+| 0x0002  Network controller
+|---- 0x0000  Ethernet controller
+|---- 0x0001  Token ring network controller
+| 0x0005  I invented this
+| 0x00a6  No me
