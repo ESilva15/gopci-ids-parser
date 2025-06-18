@@ -13,8 +13,9 @@ type SubdeviceKey struct {
 
 func parseSubdeviceLine(s string) (*Subdevice, error) {
 	newSubdev := &Subdevice{}
-	err := parseHexHexStringLine(&newSubdev.ID, &newSubdev.Subdevice,
-		&newSubdev.Name, s)
+
+	var err error
+	newSubdev.Name, err = parseHexFieldsLine(s, &newSubdev.ID, &newSubdev.Subdevice)
 	if err != nil {
 		return nil, err
 	}

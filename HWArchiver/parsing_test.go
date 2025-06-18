@@ -145,34 +145,6 @@ func TestParseHexFieldsLineWithBadHexCount(t *testing.T) {
 	}
 }
 
-// Test parseHexHexStringLine with good inputs
-func TestParseHexHexStringLine(t *testing.T) {
-	input := "0008 0007 A Cool Name"
-	expectedHex1 := int64(8)
-	expectedHex2 := int64(7)
-	expectedName := "A Cool Name"
-
-	var hex1 int64
-	var hex2 int64
-	var name string
-	err := parseHexHexStringLine(&hex1, &hex2, &name, input)
-	if err != nil {
-		t.Errorf("Got error: %+v", err)
-	}
-
-	if hex1 != expectedHex1 {
-		t.Errorf("Expected: %+v, Got %+v", expectedHex1, hex1)
-	}
-
-	if hex2 != expectedHex2 {
-		t.Errorf("Expected: %+v, Got %+v", expectedHex2, hex2)
-	}
-
-	if name != expectedName {
-		t.Errorf("Expected: %+v, Got %+v", expectedName, name)
-	}
-}
-
 // Test lineStartsWithHex with good input
 func TestLineStartsWithHex(t *testing.T) {
 	input := "00AB A Cool Line"

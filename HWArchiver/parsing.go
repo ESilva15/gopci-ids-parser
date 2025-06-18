@@ -30,6 +30,7 @@ func findHexOffset(s string) (int, error) {
 
 // parseHexFieldsLine will separate the string by its spaces and then
 // parse N hex at the beginning of the line and join the remaining string
+// ...<hex> <string>
 func parseHexFieldsLine(s string, hexOut ...*int64) (string, error) {
 	fields := strings.Fields(s)
 	if len(fields) < len(hexOut)+1 {
@@ -48,18 +49,6 @@ func parseHexFieldsLine(s string, hexOut ...*int64) (string, error) {
 	// Join the remaining fields as the name
 	name := strings.Join(fields[len(hexOut):], " ")
 	return name, nil
-}
-
-// parseHexHexStringLine parses a line with the following syntax
-// '<hex> <hex> <string>'
-func parseHexHexStringLine(hex1 *int64, hex2 *int64, name *string, s string) error {
-	retName, err := parseHexFieldsLine(s, hex1, hex2)
-	if err != nil {
-		return err
-	}
-	*name = retName
-
-	return nil
 }
 
 func lineStartsWithHex(s string) bool {
