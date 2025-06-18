@@ -31,7 +31,8 @@ func (c *Device) addSubdevice(device *Subdevice) error {
 func parseDeviceLine(s string) (*Device, error) {
 	newClass := Device{-1, "", make(map[SubdeviceKey]*Subdevice)}
 
-	err := parseHexStringLine(&newClass.ID, &newClass.Name, s)
+	var err error
+	newClass.Name, err = parseHexFieldsLine(s, &newClass.ID)
 	if err != nil {
 		return nil, err
 	}

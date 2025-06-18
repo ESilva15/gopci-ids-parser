@@ -29,7 +29,8 @@ func (c *Vendor) addDevice(device *Device) error {
 func parseVendorLine(s string) (*Vendor, error) {
 	newClass := Vendor{-1, "", make(map[int64]*Device)}
 
-	err := parseHexStringLine(&newClass.ID, &newClass.Name, s)
+	var err error
+	newClass.Name, err = parseHexFieldsLine(s, &newClass.ID)
 	if err != nil {
 		return nil, err
 	}

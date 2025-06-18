@@ -3,6 +3,7 @@ package hwarchiver
 import (
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 func validHexChar(c rune) bool {
@@ -27,19 +28,36 @@ func findHexOffset(s string) (int, error) {
 	return offset, nil
 }
 
-// parseHexStringLine parses a line with the following syntax
-// '<hex> <string>'
-func parseHexStringLine(hex *int64, name *string, input string) error {
-	hexOffset, err := findHexOffset(input)
-	if err != nil {
-		return err
+// parseHexFieldsLine will separate the string by its spaces and then
+// parse N hex at the beginning of the line and join the remaining string
+func parseHexFieldsLine(s string, hexOut ...*int64) (string, error) {
+	fields := strings.Fields(s)
+	if len(fields) < len(hexOut)+1 {
+		return "", fmt.Errorf("expected at least %d fields, got %d",
+			len(hexOut)+1, len(fields))
 	}
 
-	*hex, err = strconv.ParseInt(input[:hexOffset], 16, 64)
+	for i, ptr := range hexOut {
+		val, err := strconv.ParseInt(fields[i], 16, 64)
+		if err != nil {
+			return "", fmt.Errorf("invalid hex at position %d: %v", i, err)
+		}
+		*ptr = val
+	}
+
+	// Join the remaining fields as the name
+	name := strings.Join(fields[len(hexOut):], " ")
+	return name, nil
+}
+
+// parseHexHexStringLine parses a line with the following syntax
+// '<hex> <hex> <string>'
+func parseHexHexStringLine(hex1 *int64, hex2 *int64, name *string, s string) error {
+	retName, err := parseHexFieldsLine(s, hex1, hex2)
 	if err != nil {
 		return err
 	}
-	*name = input[hexOffset+1:]
+	*name = retName
 
 	return nil
 }

@@ -8,7 +8,8 @@ type ProgInterface struct {
 func parseProgInterfaceLine(s string) (*ProgInterface, error) {
 	newSubclass := ProgInterface{-1, ""}
 
-	err := parseHexStringLine(&newSubclass.ID, &newSubclass.Name, s)
+	var err error
+	newSubclass.Name, err = parseHexFieldsLine(s, &newSubclass.ID)
 	if err != nil {
 		return nil, err
 	}

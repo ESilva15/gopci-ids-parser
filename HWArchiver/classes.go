@@ -51,7 +51,8 @@ func parseClassLine(s string) (*Class, error) {
 	input := s[2:]
 	newClass := Class{-1, "", make(map[int64]*Subclass)}
 
-	err := parseHexStringLine(&newClass.ID, &newClass.Name, input)
+	var err error
+	newClass.Name, err = parseHexFieldsLine(input, &newClass.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +63,8 @@ func parseClassLine(s string) (*Class, error) {
 func parseSubclassLine(s string) (*Subclass, error) {
 	newSubclass := Subclass{-1, "", make(map[int64]*ProgInterface)}
 
-	err := parseHexStringLine(&newSubclass.ID, &newSubclass.Name, s)
+	var err error
+	newSubclass.Name, err = parseHexFieldsLine(s, &newSubclass.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -150,11 +152,4 @@ func readSubclassSection(exp *HWExplorer, cls *Class) error {
 	}
 
 	return nil
-}
-
-func parseSubClassLine(s string) (*Class, error) {
-	// input := s[2:]
-
-	fmt.Println(strings.Fields(s))
-	return &Class{0, "", make(map[int64]*Subclass)}, nil
 }
