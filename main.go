@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
-	hwarchive "systemStatus/HWArchiver"
+	hwarchive "HWArchiver/HWArchiver"
 	// "path/filepath"
 )
 
