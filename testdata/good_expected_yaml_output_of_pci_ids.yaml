@@ -1,0 +1,124 @@
+vendors:
+  1:
+    id: 1
+    name: SafeNet (wrong ID)
+    devices: {}
+  16:
+    id: 16
+    name: Allied Telesis, Inc (Wrong ID)
+    devices:
+      33081:
+        id: 33081
+        name: AT-2500TX V3 Ethernet
+        subdevices: {}
+  20:
+    id: 20
+    name: Loongson Technology LLC
+    devices:
+      31232:
+        id: 31232
+        name: Hyper Transport Bridge Controller
+        subdevices: {}
+      31248:
+        id: 31248
+        name: Hyper Transport Bridge Controller
+        subdevices: {}
+      31269:
+        id: 31269
+        name: LG100 GPU
+        subdevices: {}
+      31337:
+        id: 31337
+        name: PCIe x16 Root Port
+        subdevices: {}
+  24:
+    id: 24
+    name: Fn-Link Technology Limited
+    devices:
+      25170:
+        id: 25170
+        name: 6252CPUB 802.11ax PCIe Wireless Network Adapter
+        subdevices: {}
+  28:
+    id: 28
+    name: PEAK-System Technik GmbH
+    devices:
+      1:
+        id: 1
+        name: PCAN-PCI CAN-Bus controller
+        subdevices:
+          ? subvendorid: 28
+            subdeviceid: 4
+          : id: 28
+            name: 2 Channel CAN Bus SJC1000
+            subdevice_id: 4
+          ? subvendorid: 28
+            subdeviceid: 5
+          : id: 28
+            name: 2 Channel CAN Bus SJC1000 (Optically Isolated)
+            subdevice_id: 5
+  61:
+    id: 61
+    name: Lockheed Martin-Marietta Corp
+    devices: {}
+classes:
+  0:
+    id: 0
+    name: Unclassified device
+    subclasses:
+      1:
+        id: 1
+        name: VGA compatible unclassified device
+        prog_interfaces: {}
+  1:
+    id: 1
+    name: Mass storage controller
+    subclasses:
+      1:
+        id: 1
+        name: IDE interface
+        prog_interfaces:
+          0:
+            id: 0
+            name: ISA Compatibility mode-only controller
+          143:
+            id: 143
+            name: PCI native mode controller, supports both channels switched to ISA
+              compatibility mode, supports bus mastering
+      2:
+        id: 2
+        name: Floppy disk controller
+        prog_interfaces: {}
+      5:
+        id: 5
+        name: ATA controller
+        prog_interfaces:
+          32:
+            id: 32
+            name: ADMA single stepping
+          48:
+            id: 48
+            name: ADMA continuous operation
+      8:
+        id: 8
+        name: Non-Volatile memory controller
+        prog_interfaces:
+          1:
+            id: 1
+            name: NVMHCI
+          2:
+            id: 2
+            name: NVM Express
+      128:
+        id: 128
+        name: Mass storage controller
+        prog_interfaces: {}
+  5:
+    id: 5
+    name: I invented this
+    subclasses: {}
+  166:
+    id: 166
+    name: No me
+    subclasses: {}
+

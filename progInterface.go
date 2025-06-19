@@ -1,7 +1,7 @@
 package hwarchiver
 
 type ProgInterface struct {
-	Identity
+	Identity `yaml:",inline"`
 }
 
 func NewProgInterface() *ProgInterface {

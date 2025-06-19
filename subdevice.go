@@ -1,8 +1,8 @@
 package hwarchiver
 
 type Subdevice struct {
-	Identity
-	Subdevice int64
+	Identity `yaml:",inline"`
+	Subdevice int64 `yaml:"subdevice_id"`
 }
 
 type SubdeviceKey struct {

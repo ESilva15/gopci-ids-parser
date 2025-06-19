@@ -1,8 +1,8 @@
 package hwarchiver
 
 type Device struct {
-	Identity
-	Subdevices map[SubdeviceKey]*Subdevice
+	Identity `yaml:",inline"`
+	Subdevices map[SubdeviceKey]*Subdevice `yaml:"subdevices"`
 }
 
 func NewDevice() *Device {

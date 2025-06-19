@@ -11,15 +11,11 @@
 	8139  AT-2500TX V3 Ethernet
 0014  Loongson Technology LLC
 	7a00  Hyper Transport Bridge Controller
-	7a0f  DMA (Direct Memory Access) Controller
 # Found on some boards with two sockets
 	7a10  Hyper Transport Bridge Controller
-	7a24  OHCI USB Controller
 # Found on 7A2000 PCH
 	7a25  LG100 GPU
-	7a34  xHCI USB Controller
 # Found on 7A2000 PCH
-	7a36  Display Controller
 	7a69  PCIe x16 Root Port
 0018  Fn-Link Technology Limited
 	6252  6252CPUB 802.11ax PCIe Wireless Network Adapter
@@ -28,7 +24,6 @@
 		001c 0004  2 Channel CAN Bus SJC1000
 		001c 0005  2 Channel CAN Bus SJC1000 (Optically Isolated)
 003d  Lockheed Martin-Marietta Corp
-005e  Inexistant Vendor
 
 
 # List of known device classes, subclasses and programming interfaces
@@ -39,38 +34,18 @@
 #		prog-if  prog-if_name  	<-- two tabs
 
 C 00  Unclassified device
-	00  Non-VGA unclassified device
 	01  VGA compatible unclassified device
-	05  Image coprocessor
 C 01  Mass storage controller
-	00  SCSI storage controller
 	01  IDE interface
 		00  ISA Compatibility mode-only controller
-		05  PCI native mode-only controller
-		0a  ISA Compatibility mode controller, supports both channels switched to PCI native mode
-		0f  PCI native mode controller, supports both channels switched to ISA compatibility mode
 		8f  PCI native mode controller, supports both channels switched to ISA compatibility mode, supports bus mastering
 	02  Floppy disk controller
-	03  IPI bus controller
-	04  RAID bus controller
 	05  ATA controller
 		20  ADMA single stepping
 		30  ADMA continuous operation
-	06  SATA controller
-		00  Vendor specific
-		01  AHCI 1.0
-		02  Serial Storage Bus
-	07  Serial Attached SCSI controller
-		01  Serial Storage Bus
 	08  Non-Volatile memory controller
 		01  NVMHCI
 		02  NVM Express
-	09  Universal Flash Storage controller
-		00  Vendor specific
-		01  UFSHCI
 	80  Mass storage controller
-C 02  Network controller
-	00  Ethernet controller
-	01  Token ring network controller
 C 05  I invented this
 C a6  No me

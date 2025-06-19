@@ -6,8 +6,8 @@ import (
 )
 
 type Vendor struct {
-	Identity
-	Devices map[int64]*Device
+	Identity `yaml:",inline"`
+	Devices map[int64]*Device `yaml:"devices"`
 }
 
 func NewVendor() *Vendor {

@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"os"
 	"strings"
+
+	"gopkg.in/yaml.v2"
 )
 
 type Named interface {
@@ -11,8 +13,8 @@ type Named interface {
 }
 
 type Identity struct {
-	ID   int64
-	Name string
+	ID   int64 	`yaml:"id"`
+	Name string `yaml:"name"`
 }
 
 func (i *Identity) SetName(name string) {
@@ -20,8 +22,8 @@ func (i *Identity) SetName(name string) {
 }
 
 type HWArchive struct {
-	Vendors map[int64]*Vendor
-	Classes map[int64]*Class
+	Vendors map[int64]*Vendor `yaml:"vendors"`
+	Classes map[int64]*Class `yaml:"classes"`
 }
 
 func CreateHWArchive() *HWArchive {
@@ -80,4 +82,13 @@ func (hwa *HWArchive) Load(path string) error {
 	}
 
 	return nil
+}
+
+func (hwa *HWArchive) ToYAML() (string, error) {
+	yamlData, err := yaml.Marshal(hwa)
+	if err != nil {
+		return "", err
+	}
+
+	return string(yamlData), nil
 }

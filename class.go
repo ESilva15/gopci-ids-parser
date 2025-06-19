@@ -6,8 +6,8 @@ import (
 )
 
 type Class struct {
-	Identity
-	Subclasses map[int64]*Subclass
+	Identity `yaml:",inline"`
+	Subclasses map[int64]*Subclass `yaml:"subclasses"`
 }
 
 func NewClass() *Class {

@@ -1,8 +1,8 @@
 package hwarchiver
 
 type Subclass struct {
-	Identity
-	ProgInterfaces map[int64]*ProgInterface
+	Identity `yaml:",inline"`
+	ProgInterfaces map[int64]*ProgInterface `yaml:"prog_interfaces"`
 }
 
 func NewSubclass() *Subclass {
