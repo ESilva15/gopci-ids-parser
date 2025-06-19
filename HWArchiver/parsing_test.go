@@ -96,25 +96,52 @@ func TestFindHexOffsetBadInput(t *testing.T) {
 	}
 }
 
-// Test parseHexStringLine with good inputs
-func TestParseHexStringLine(t *testing.T) {
-	input := "05 A Cool Name"
-	expectedHex := int64(5)
-	expectedName := "A Cool Name"
+// test parseHexFieldsLineWithBadHex with good expected input
+func TestParseHexFieldsLine(t *testing.T) {
+	input := "0003 0005 A nice line"
+	expectHex1 := int64(3)
+	expectHex2 := int64(5)
+	expectName := "A nice line"
 
-	var hex int64
-	var name string
-	err := parseHexStringLine(&hex, &name, input)
+	var hex1 int64
+	var hex2 int64
+	name, err := parseHexFieldsLine(input, &hex1, &hex2)
 	if err != nil {
-		t.Errorf("Got error: %+v", err)
+		t.Errorf("Got an error: %+v", err)
 	}
 
-	if hex != expectedHex {
-		t.Errorf("Expected: %+v, Got %+v", expectedHex, hex)
+	if hex1 != expectHex1 {
+		t.Errorf("Expected: %+v, Got: %+v", expectHex1, hex1)
 	}
+	if hex2 != expectHex2 {
+		t.Errorf("Expected: %+v, Got: %+v", expectHex2, hex2)
+	}
+	if name != expectName {
+		t.Errorf("Expected: %+v, Got: %+v", expectName, name)
+	}
+}
 
-	if name != expectedName {
-		t.Errorf("Expected: %+v, Got %+v", expectedName, name)
+// test parseHexFieldsLineWithBadHex with bad hex numbers
+func TestParseHexFieldsLineWithBadHex(t *testing.T) {
+	input := "00Z3 0005 A nice line"
+
+	var hex1 int64
+	var hex2 int64
+	_, err := parseHexFieldsLine(input, &hex1, &hex2)
+	if err == nil {
+		t.Errorf("Got an error: %+v", err)
+	}
+}
+
+// test parseHexFieldsLineWithBadHex with fewer hexes than requested
+func TestParseHexFieldsLineWithBadHexCount(t *testing.T) {
+	input := "00Z3 0005"
+
+	var hex1 int64
+	var hex2 int64
+	_, err := parseHexFieldsLine(input, &hex1, &hex2)
+	if err == nil {
+		t.Errorf("Got an error: %+v", err)
 	}
 }
 
@@ -122,6 +149,30 @@ func TestParseHexStringLine(t *testing.T) {
 func TestLineStartsWithHex(t *testing.T) {
 	input := "00AB A Cool Line"
 	expected := true
+
+	result := lineStartsWithHex(input)
+
+	if result != expected {
+		t.Errorf("Expected: %+v, Got: %+v", expected, result)
+	}
+}
+
+// Test lineStartsWithHex without a hex
+func TestLineStartsWithHexWithoutHex(t *testing.T) {
+	input := "Z Cool Line"
+	expected := false
+
+	result := lineStartsWithHex(input)
+
+	if result != expected {
+		t.Errorf("Expected: %+v, Got: %+v", expected, result)
+	}
+}
+
+// Test lineStartsWithHex with bad hex
+func TestLineStartsWithHexWithBadHex(t *testing.T) {
+	input := "12G4 Cool Line"
+	expected := false
 
 	result := lineStartsWithHex(input)
 

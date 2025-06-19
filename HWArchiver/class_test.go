@@ -8,8 +8,10 @@ import (
 func TestParseClassLine(t *testing.T) {
 	input := "C 03 Some Cool Hardware Stuff"
 	expected := &Class{
-		ID:         3,
-		Name:       "Some Cool Hardware Stuff",
+		Identity: Identity{
+			ID:   3,
+			Name: "Some Cool Hardware Stuff",
+		},
 		Subclasses: make(map[int64]*Subclass),
 	}
 

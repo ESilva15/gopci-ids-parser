@@ -1,17 +1,26 @@
 package hwarchiver
 
 type ProgInterface struct {
-	ID   int64
-	Name string
+	Identity
+}
+
+func NewProgInterface() *ProgInterface {
+	return &ProgInterface{
+		Identity: Identity{
+			ID:   -1,
+			Name: "",
+		},
+	}
 }
 
 func parseProgInterfaceLine(s string) (*ProgInterface, error) {
-	newSubclass := ProgInterface{-1, ""}
+	newSubclass := NewProgInterface()
 
-	err := parseHexStringLine(&newSubclass.ID, &newSubclass.Name, s)
+	var err error
+	newSubclass.Name, err = parseHexFieldsLine(s, &newSubclass.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	return &newSubclass, nil
+	return newSubclass, nil
 }
