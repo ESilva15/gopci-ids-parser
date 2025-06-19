@@ -1,7 +1,7 @@
 package hwarchiver
 
 import (
-	"fmt"
+	// "fmt"
 	"strings"
 )
 
@@ -65,18 +65,18 @@ func readVendorSection(exp *HWExplorer, hwa *HWArchive) error {
 					if err != nil {
 						return err
 					}
-					fmt.Printf("↓>>>>>>>> 0x%04x 0x%04x %s\n", subDev.ID, subDev.Subdevice, subDev.Name)
+					// fmt.Printf("↓>>>>>>>> 0x%04x 0x%04x %s\n", subDev.ID, subDev.Subdevice, subDev.Name)
 					dev.addSubdevice(subDev)
 					return nil
 				},
 				func(dev *Device) {
-					fmt.Printf("↓>>>> 0x%04x %s\n", dev.ID, dev.Name)
+					// fmt.Printf("↓>>>> 0x%04x %s\n", dev.ID, dev.Name)
 				},
 				func(_ *Device) {},
 			)
 		},
 		func(v *Vendor) {
-			fmt.Printf("↓ 0x%04x %s\n", v.ID, v.Name)
+			// fmt.Printf("↓ 0x%04x %s\n", v.ID, v.Name)
 		},
 	)
 }

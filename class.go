@@ -1,7 +1,7 @@
 package hwarchiver
 
 import (
-	"fmt"
+	// "fmt"
 	"strings"
 )
 
@@ -66,18 +66,18 @@ func readClassSection(exp *HWExplorer, hwa *HWArchive) error {
 					if err != nil {
 						return err
 					}
-					fmt.Printf("|-------- 0x%04x %s\n", progIF.ID, progIF.Name)
+					// fmt.Printf("|-------- 0x%04x %s\n", progIF.ID, progIF.Name)
 					sc.addProgIF(progIF)
 					return nil
 				},
 				func(sc *Subclass) {
-					fmt.Printf("|---- 0x%04x %s\n", sc.ID, sc.Name)
+					// fmt.Printf("|---- 0x%04x %s\n", sc.ID, sc.Name)
 				},
 				func(_ *Subclass) {},
 			)
 		},
 		func(c *Class) {
-			fmt.Printf("| 0x%04x %s\n", c.ID, c.Name)
+			// fmt.Printf("| 0x%04x %s\n", c.ID, c.Name)
 		},
 	)
 }
