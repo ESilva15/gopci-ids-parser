@@ -156,3 +156,27 @@ func TestLineStartsWithHex(t *testing.T) {
 		t.Errorf("Expected: %+v, Got: %+v", expected, result)
 	}
 }
+
+// Test lineStartsWithHex without a hex
+func TestLineStartsWithHexWithoutHex(t *testing.T) {
+	input := "Z Cool Line"
+	expected := false
+
+	result := lineStartsWithHex(input)
+
+	if result != expected {
+		t.Errorf("Expected: %+v, Got: %+v", expected, result)
+	}
+}
+
+// Test lineStartsWithHex with bad hex
+func TestLineStartsWithHexWithBadHex(t *testing.T) {
+	input := "12G4 Cool Line"
+	expected := false
+
+	result := lineStartsWithHex(input)
+
+	if result != expected {
+		t.Errorf("Expected: %+v, Got: %+v", expected, result)
+	}
+}

@@ -52,7 +52,6 @@ func parseHexFieldsLine(s string, hexOut ...*int64) (string, error) {
 }
 
 func lineStartsWithHex(s string) bool {
-	// This code is repeated with parseHexStringLine - check what we can do
 	hexOffset, err := findHexOffset(s)
 	if err != nil {
 		return false
@@ -62,7 +61,94 @@ func lineStartsWithHex(s string) bool {
 	if err != nil {
 		return false
 	}
-	// to here
 
 	return true
+}
+
+func readTopLevelSection[
+	P any,        // Top-level type: *Class, *Vendor
+	C any,        // Nested type: *Subclass, *Device
+](
+	exp *HWExplorer,
+	hwa *HWArchive,
+	parseTop func(string) (P, error),
+	addTop func(*HWArchive, P),
+	nested func(P) error,
+	printTop func(P),
+) error {
+	// Parse and add top-level object
+	newTop, err := parseTop(exp.Peek())
+	if err != nil {
+		return err
+	}
+
+	printTop(newTop)
+	addTop(hwa, newTop)
+	exp.Consume()
+
+	for exp.Scan() {
+		line := exp.Peek()
+
+		if strings.HasPrefix(line, "C ") || lineStartsWithHex(line) {
+			break
+		}
+		if strings.HasPrefix(line, "\t\t") {
+			return fmt.Errorf("line `%d` went from top to sub-sub-level", exp.line)
+		}
+		if strings.HasPrefix(line, "\t") {
+			if err := nested(newTop); err != nil {
+				return err
+			}
+			continue
+		}
+
+		exp.Consume()
+	}
+
+	return nil
+}
+
+func readSection[P any, C any](
+	exp *HWExplorer,
+	parent P,
+	parse func(string) (C, error),
+	add func(P, C) error,
+	abort func(string) bool,
+	match func(string) bool,
+	parseNested func(C, string) error,
+	print func(C),
+	printNested func(C),
+) error {
+	newChild, err := parse(strings.TrimSpace(exp.Peek()))
+	if err != nil {
+		return err
+	}
+
+	print(newChild)
+	if err := add(parent, newChild); err != nil {
+		return err
+	}
+
+	exp.Consume()
+
+	for exp.Scan() {
+		line := exp.Peek()
+
+		if abort(line) {
+			break
+		}
+
+		if match(line) {
+			if err := parseNested(newChild, strings.TrimSpace(line)); err != nil {
+				return err
+			}
+			printNested(newChild)
+			exp.Consume()
+			continue
+		}
+
+		exp.Consume()
+	}
+
+	return nil
 }

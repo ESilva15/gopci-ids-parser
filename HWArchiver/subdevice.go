@@ -1,9 +1,8 @@
 package hwarchiver
 
 type Subdevice struct {
-	ID        int64
+	Identity
 	Subdevice int64
-	Name      string
 }
 
 type SubdeviceKey struct {
@@ -11,8 +10,18 @@ type SubdeviceKey struct {
 	SubdeviceID int64
 }
 
+func NewSubdevice() *Subdevice {
+	return &Subdevice{
+		Identity: Identity{
+			ID:   -1,
+			Name: "",
+		},
+		Subdevice: -1,
+	}
+}
+
 func parseSubdeviceLine(s string) (*Subdevice, error) {
-	newSubdev := &Subdevice{}
+	newSubdev := NewSubdevice()
 
 	var err error
 	newSubdev.Name, err = parseHexFieldsLine(s, &newSubdev.ID, &newSubdev.Subdevice)

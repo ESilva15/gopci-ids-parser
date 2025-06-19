@@ -2,53 +2,41 @@ package hwarchiver
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"strings"
 )
 
+type Named interface {
+	SetName(string)
+}
+
+type Identity struct {
+	ID   int64
+	Name string
+}
+
+func (i *Identity) SetName(name string) {
+	i.Name = name
+}
+
 type HWArchive struct {
-	Explorer *HWExplorer
-	Vendors  map[int64]*Vendor
-	Classes  map[int64]*Class
+	Vendors map[int64]*Vendor
+	Classes map[int64]*Class
 }
 
 func CreateHWArchive() *HWArchive {
 	return &HWArchive{
-		Explorer: nil,
-		Vendors:  make(map[int64]*Vendor),
-		Classes:  make(map[int64]*Class),
+		Vendors: make(map[int64]*Vendor),
+		Classes: make(map[int64]*Class),
 	}
-}
-
-func (hwa *HWArchive) addClass(cls *Class) error {
-	if hwa.Classes == nil {
-		return fmt.Errorf("HWArchive.Classes shouldn't be nill")
-	}
-
-	_, ok := hwa.Classes[cls.ID]
-	if ok {
-		return fmt.Errorf("Key `%d` is already present", cls.ID)
-	}
-
-	hwa.Classes[cls.ID] = cls
-
-	return nil
 }
 
 func (hwa *HWArchive) addVendor(cls *Vendor) error {
-	if hwa.Classes == nil {
-		return fmt.Errorf("HWArchive.Classes shouldn't be nill")
-	}
+	return AddToMap(hwa.Vendors, cls.ID, cls, "HWArchive.Vendors")
+}
 
-	_, ok := hwa.Classes[cls.ID]
-	if ok {
-		return fmt.Errorf("Key `%d` is already present", cls.ID)
-	}
-
-	hwa.Vendors[cls.ID] = cls
-
-	return nil
+func (hwa *HWArchive) addClass(cls *Class) error {
+	return AddToMap(hwa.Classes, cls.ID, cls, "HWArchive.Classes")
 }
 
 func (hwa *HWArchive) Load(path string) error {
@@ -59,20 +47,20 @@ func (hwa *HWArchive) Load(path string) error {
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
-	hwa.Explorer = NewHWExplcorer(scanner)
+	explorer := NewHWExplcorer(scanner)
 
-	for hwa.Explorer.Scan() {
-		line := hwa.Explorer.Peek()
+	for explorer.Scan() {
+		line := explorer.Peek()
 
 		// Ignore the comments
 		if strings.HasPrefix(line, "#") {
-			hwa.Explorer.Consume()
+			explorer.Consume()
 			continue
 		}
 
 		// Handle the Classes
 		if strings.HasPrefix(line, "C ") {
-			err := readClassSection(hwa.Explorer, hwa)
+			err := readClassSection(explorer, hwa)
 			if err != nil {
 				return err
 			}
@@ -83,12 +71,12 @@ func (hwa *HWArchive) Load(path string) error {
 		// Handle the vendors
 		if lineStartsWithHex(line) {
 			// Its a vendor
-			readVendorSection(hwa.Explorer, hwa)
+			readVendorSection(explorer, hwa)
 			// hwa.Explorer.Consume()
 			continue
 		}
 
-		hwa.Explorer.Consume()
+		explorer.Consume()
 	}
 
 	return nil
