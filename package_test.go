@@ -12,11 +12,8 @@ import (
 	hwarchive "github.com/ESilva15/gopci-ids-parser"
 )
 
-func getTestDataDir(t *testing.T, file string) string {
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatalf("Failed to get current test file path")
-	}
+func getTestDataDir(file string) string {
+	_, filename, _, _ := runtime.Caller(0)
 
 	testDir := filepath.Dir(filename)
 	testdataFile := filepath.Join(testDir, "testdata", file)
@@ -25,7 +22,7 @@ func getTestDataDir(t *testing.T, file string) string {
 }
 
 func getExpectedYAML(t *testing.T) *hwarchive.HWArchive {
-	expectedYAMLfilepath := getTestDataDir(t, "good_expected_yaml_output_of_pci_ids.yaml")
+	expectedYAMLfilepath := getTestDataDir("good_expected_yaml_output_of_pci_ids.yaml")
 
 	expectedHWArchive := hwarchive.CreateHWArchive()
 	yamlFile, err := os.ReadFile(expectedYAMLfilepath)
@@ -42,7 +39,7 @@ func getExpectedYAML(t *testing.T) *hwarchive.HWArchive {
 }
 
 func TestHWArchiver(t *testing.T) {
-	filePath := getTestDataDir(t, "pci.ids")
+	filePath := getTestDataDir("pci.ids")
 
 	archive := hwarchive.CreateHWArchive()
 	err := archive.Load(filePath)
@@ -54,5 +51,15 @@ func TestHWArchiver(t *testing.T) {
 
 	if !reflect.DeepEqual(expectedArchive, archive) {
 		t.Errorf("Expected output doesn't match the result")
+	}
+}
+
+func BenchmarkWithSetup(b *testing.B) {
+	filePath := getTestDataDir("pci.ids")
+
+	b.ResetTimer()
+	for b.Loop() {
+		archive := hwarchive.CreateHWArchive()
+		archive.Load(filePath)
 	}
 }
