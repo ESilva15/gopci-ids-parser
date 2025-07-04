@@ -22,5 +22,5 @@ func TestExplorer(t *testing.T) {
 		t.Errorf("Failed to open file: %+v", err)
 	}
 	scanner := bufio.NewScanner(file)
-	_ = NewHWExplcorer(scanner)
+	_ = newHWExplorer(scanner)
 }

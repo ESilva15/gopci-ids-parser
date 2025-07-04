@@ -4,13 +4,16 @@ import (
 	"bufio"
 )
 
+// HWExplorer is a struct to help us go trough files. We can scan the line
+// but we only clean it from the buffer once we consume it
 type HWExplorer struct {
 	scanner *bufio.Scanner
 	state   bool
 	line    int
 }
 
-func NewHWExplcorer(scanner *bufio.Scanner) *HWExplorer {
+// newHWExplorer returns a new empty HWExplorer
+func newHWExplorer(scanner *bufio.Scanner) *HWExplorer {
 	return &HWExplorer{
 		scanner: scanner,
 		state:   false,
@@ -18,8 +21,8 @@ func NewHWExplcorer(scanner *bufio.Scanner) *HWExplorer {
 	}
 }
 
-// Scan conditionally advances the scanner if the current line has been consumed.
-func (exp *HWExplorer) Scan() bool {
+// scan conditionally advances the scanner if the current line has been consumed.
+func (exp *HWExplorer) scan() bool {
 	if !exp.state {
 		if exp.scanner.Scan() {
 			exp.state = true
@@ -30,16 +33,16 @@ func (exp *HWExplorer) Scan() bool {
 	return true
 }
 
-// Peek returns the current line without advancing.
-func (exp *HWExplorer) Peek() string {
+// peek returns the current line without advancing.
+func (exp *HWExplorer) peek() string {
 	if exp.state {
 		return exp.scanner.Text()
 	}
 	return ""
 }
 
-// Consume marks the current line as used and returns it.
-func (exp *HWExplorer) Consume() string {
+// consume marks the current line as used and returns it.
+func (exp *HWExplorer) consume() string {
 	exp.state = false
 	exp.line++
 	return exp.scanner.Text()

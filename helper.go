@@ -2,7 +2,7 @@ package hwarchiver
 
 import "fmt"
 
-func AddToMap[K comparable, T any](m map[K]T, key K, value T, mapname string) error {
+func addToMap[K comparable, T any](m map[K]T, key K, value T, mapname string) error {
 	if m == nil {
 		return fmt.Errorf("map %s is nill when it should not be", mapname)
 	}
