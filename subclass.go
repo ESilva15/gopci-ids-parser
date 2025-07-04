@@ -1,11 +1,11 @@
 package hwarchiver
 
 type Subclass struct {
-	Identity `yaml:",inline"`
+	Identity       `yaml:",inline"`
 	ProgInterfaces map[int64]*ProgInterface `yaml:"prog_interfaces"`
 }
 
-func NewSubclass() *Subclass {
+func newSubclass() *Subclass {
 	return &Subclass{
 		Identity: Identity{
 			ID:   -1,
@@ -16,12 +16,12 @@ func NewSubclass() *Subclass {
 }
 
 func (s *Subclass) addProgIF(progIf *ProgInterface) error {
-	return AddToMap(s.ProgInterfaces, progIf.ID, progIf,
+	return addToMap(s.ProgInterfaces, progIf.ID, progIf,
 		"HWArchive.Classes.Subclasses.ProgInterfaces")
 }
 
 func parseSubclassLine(s string) (*Subclass, error) {
-	newSubclass := NewSubclass()
+	newSubclass := newSubclass()
 
 	var err error
 	newSubclass.Name, err = parseHexFieldsLine(s, &newSubclass.ID)

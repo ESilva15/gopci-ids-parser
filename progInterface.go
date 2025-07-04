@@ -1,10 +1,16 @@
 package hwarchiver
 
+import (
+	"bufio"
+	"log"
+	"strings"
+)
+
 type ProgInterface struct {
 	Identity `yaml:",inline"`
 }
 
-func NewProgInterface() *ProgInterface {
+func newProgInterface() *ProgInterface {
 	return &ProgInterface{
 		Identity: Identity{
 			ID:   -1,
@@ -14,7 +20,7 @@ func NewProgInterface() *ProgInterface {
 }
 
 func parseProgInterfaceLine(s string) (*ProgInterface, error) {
-	newSubclass := NewProgInterface()
+	newSubclass := newProgInterface()
 
 	var err error
 	newSubclass.Name, err = parseHexFieldsLine(s, &newSubclass.ID)
@@ -23,4 +29,20 @@ func parseProgInterfaceLine(s string) (*ProgInterface, error) {
 	}
 
 	return newSubclass, nil
+}
+
+func parseProginterface(block string, sc *Subclass) {
+	scanner := bufio.NewScanner(strings.NewReader(block))
+
+	for scanner.Scan() {
+		progIf, err := parseProgInterfaceLine(scanner.Text())
+		if err != nil {
+			log.Fatalf("failed to parse line: `%s`, %v", scanner.Text(), err)
+		}
+
+		err = sc.addProgIF(progIf)
+		if err != nil {
+			log.Fatalf("failed to add stuff to map: %v", err)
+		}
+	}
 }

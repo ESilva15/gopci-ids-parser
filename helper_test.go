@@ -6,7 +6,7 @@ import (
 
 func TestAddToMap_Success(t *testing.T) {
 	m := make(map[int64]string)
-	err := AddToMap(m, int64(1), "value", "TestPath")
+	err := addToMap(m, int64(1), "value", "TestPath")
 
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
@@ -19,7 +19,7 @@ func TestAddToMap_Success(t *testing.T) {
 
 func TestAddToMap_AlreadyExists(t *testing.T) {
 	m := map[int64]string{1: "existing"}
-	err := AddToMap(m, int64(1), "new", "TestPath")
+	err := addToMap(m, int64(1), "new", "TestPath")
 
 	if err == nil {
 		t.Fatal("expected error for duplicate key, got nil")
@@ -28,7 +28,7 @@ func TestAddToMap_AlreadyExists(t *testing.T) {
 
 func TestAddToMap_NilMap(t *testing.T) {
 	var m map[int64]string
-	err := AddToMap(m, int64(1), "value", "TestPath")
+	err := addToMap(m, int64(1), "value", "TestPath")
 
 	if err == nil {
 		t.Fatal("expected error for nil map, got nil")

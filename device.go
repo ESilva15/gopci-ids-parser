@@ -1,14 +1,14 @@
 package hwarchiver
 
 type Device struct {
-	Identity `yaml:",inline"`
+	Identity   `yaml:",inline"`
 	Subdevices map[SubdeviceKey]*Subdevice `yaml:"subdevices"`
 }
 
-func NewDevice() *Device {
+func newDevice() *Device {
 	return &Device{
 		Identity: Identity{
-			ID: -1,
+			ID:   -1,
 			Name: "",
 		},
 		Subdevices: make(map[SubdeviceKey]*Subdevice),
@@ -17,12 +17,11 @@ func NewDevice() *Device {
 
 func (d *Device) addSubdevice(device *Subdevice) error {
 	key := SubdeviceKey{device.ID, device.Subdevice}
-
-	return AddToMap(d.Subdevices, key, device, "HWArchive.Vendors.Device.Subdevices")
+	return addToMap(d.Subdevices, key, device, "HWArchive.Vendors.Device.Subdevices")
 }
 
 func parseDeviceLine(s string) (*Device, error) {
-	newClass := NewDevice()
+	newClass := newDevice()
 
 	var err error
 	newClass.Name, err = parseHexFieldsLine(s, &newClass.ID)

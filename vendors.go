@@ -1,16 +1,17 @@
 package hwarchiver
 
 import (
-	// "fmt"
+	"bufio"
+	"log"
 	"strings"
 )
 
 type Vendor struct {
 	Identity `yaml:",inline"`
-	Devices map[int64]*Device `yaml:"devices"`
+	Devices  map[int64]*Device `yaml:"devices"`
 }
 
-func NewVendor() *Vendor {
+func newVendor() *Vendor {
 	return &Vendor{
 		Identity: Identity{
 			ID:   -1,
@@ -21,11 +22,11 @@ func NewVendor() *Vendor {
 }
 
 func (c *Vendor) addDevice(device *Device) error {
-	return AddToMap(c.Devices, device.ID, device, "HWArchive.Vendors.Devices")
+	return addToMap(c.Devices, device.ID, device, "HWArchive.Vendors.Devices")
 }
 
 func parseVendorLine(s string) (*Vendor, error) {
-	newClass := NewVendor()
+	newClass := newVendor()
 
 	var err error
 	newClass.Name, err = parseHexFieldsLine(s, &newClass.ID)
@@ -36,47 +37,44 @@ func parseVendorLine(s string) (*Vendor, error) {
 	return newClass, nil
 }
 
-func readVendorSection(exp *HWExplorer, hwa *HWArchive) error {
-	return readTopLevelSection[*Vendor, *Device](
-		exp,
-		hwa,
-		parseVendorLine,
-		func(hwa *HWArchive, v *Vendor) {
-			hwa.addVendor(v)
-		},
-		func(v *Vendor) error {
-			return readSection(
-				exp,
-				v,
-				parseDeviceLine,
-				func(parent *Vendor, child *Device) error {
-					parent.addDevice(child)
-					return nil
-				},
-				func(line string) bool {
-					return strings.HasPrefix(line, "C ") || lineStartsWithHex(line) ||
-						(strings.HasPrefix(line, "\t") && !strings.HasPrefix(line, "\t\t"))
-				},
-				func(line string) bool {
-					return strings.HasPrefix(line, "\t\t")
-				},
-				func(dev *Device, line string) error {
-					subDev, err := parseSubdeviceLine(line)
-					if err != nil {
-						return err
-					}
-					// fmt.Printf("↓>>>>>>>> 0x%04x 0x%04x %s\n", subDev.ID, subDev.Subdevice, subDev.Name)
-					dev.addSubdevice(subDev)
-					return nil
-				},
-				func(dev *Device) {
-					// fmt.Printf("↓>>>> 0x%04x %s\n", dev.ID, dev.Name)
-				},
-				func(_ *Device) {},
-			)
-		},
-		func(v *Vendor) {
-			// fmt.Printf("↓ 0x%04x %s\n", v.ID, v.Name)
-		},
-	)
+func parseVendorBlock(vendorStr string, block string, hwa *HWArchive) {
+	vendor, err := parseVendorLine(vendorStr)
+	if err != nil {
+		log.Fatalf("Failed to parse class `%s`: %v", vendorStr, err)
+	}
+	err = hwa.addVendor(vendor)
+	if err != nil {
+		log.Fatalf("failed to add class to classes: %v", err)
+	}
+
+	scanner := bufio.NewScanner(strings.NewReader(block))
+	explorer := newHWExplorer(scanner)
+
+	for explorer.scan() {
+		line := explorer.peek()
+
+		if strings.HasPrefix(line, "\t") {
+			device, err := parseDeviceLine(line)
+			if err != nil {
+				log.Fatalf("Failed to parse subclass `%s`: %v", line, err)
+			}
+			err = vendor.addDevice(device)
+			if err != nil {
+				log.Fatalf("failed to add class to classes: %v", err)
+			}
+			explorer.consume()
+
+			prefixChecker := func(line string) bool {
+				return strings.HasPrefix(line, "\t\t")
+			}
+			block, err := readBlock(explorer, prefixChecker)
+			if err != nil {
+				log.Fatalf("It broke here: %v", err)
+			}
+
+			parseSubdevice(block, device)
+
+			continue
+		}
+	}
 }

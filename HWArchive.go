@@ -2,6 +2,7 @@ package hwarchiver
 
 import (
 	"bufio"
+	"log"
 	"os"
 	"strings"
 
@@ -9,21 +10,21 @@ import (
 )
 
 type Named interface {
-	SetName(string)
+	setName(string)
 }
 
 type Identity struct {
-	ID   int64 	`yaml:"id"`
+	ID   int64  `yaml:"id"`
 	Name string `yaml:"name"`
 }
 
-func (i *Identity) SetName(name string) {
+func (i *Identity) setName(name string) {
 	i.Name = name
 }
 
 type HWArchive struct {
 	Vendors map[int64]*Vendor `yaml:"vendors"`
-	Classes map[int64]*Class `yaml:"classes"`
+	Classes map[int64]*Class  `yaml:"classes"`
 }
 
 func CreateHWArchive() *HWArchive {
@@ -34,11 +35,11 @@ func CreateHWArchive() *HWArchive {
 }
 
 func (hwa *HWArchive) addVendor(cls *Vendor) error {
-	return AddToMap(hwa.Vendors, cls.ID, cls, "HWArchive.Vendors")
+	return addToMap(hwa.Vendors, cls.ID, cls, "HWArchive.Vendors")
 }
 
 func (hwa *HWArchive) addClass(cls *Class) error {
-	return AddToMap(hwa.Classes, cls.ID, cls, "HWArchive.Classes")
+	return addToMap(hwa.Classes, cls.ID, cls, "HWArchive.Classes")
 }
 
 func (hwa *HWArchive) Load(path string) error {
@@ -49,36 +50,42 @@ func (hwa *HWArchive) Load(path string) error {
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
-	explorer := NewHWExplcorer(scanner)
+	explorer := newHWExplorer(scanner)
 
-	for explorer.Scan() {
-		line := explorer.Peek()
-
-		// Ignore the comments
-		if strings.HasPrefix(line, "#") {
-			explorer.Consume()
+	for explorer.scan() {
+		line := explorer.peek()
+		if strings.HasPrefix(line, "#") || line == "" {
+			explorer.consume()
 			continue
 		}
 
-		// Handle the Classes
 		if strings.HasPrefix(line, "C ") {
-			err := readClassSection(explorer, hwa)
+			prefixChecker := func(line string) bool {
+				return strings.HasPrefix(line, "\t")
+			}
+			explorer.consume()
+			block, err := readBlock(explorer, prefixChecker)
 			if err != nil {
-				return err
+				log.Fatalf("It broke here: %v", err)
 			}
 
+			parseClassBlock(line, block, hwa)
 			continue
 		}
 
-		// Handle the vendors
 		if lineStartsWithHex(line) {
-			// Its a vendor
-			readVendorSection(explorer, hwa)
-			// hwa.Explorer.Consume()
+			prefixChecker := func(line string) bool {
+				return strings.HasPrefix(line, "\t")
+			}
+			explorer.consume()
+			block, err := readBlock(explorer, prefixChecker)
+			if err != nil {
+				log.Fatalf("It broke here: %v", err)
+			}
+
+			parseVendorBlock(line, block, hwa)
 			continue
 		}
-
-		explorer.Consume()
 	}
 
 	return nil

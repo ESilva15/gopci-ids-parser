@@ -1,16 +1,17 @@
 package hwarchiver
 
 import (
-	// "fmt"
+	"bufio"
+	"log"
 	"strings"
 )
 
 type Class struct {
-	Identity `yaml:",inline"`
+	Identity   `yaml:",inline"`
 	Subclasses map[int64]*Subclass `yaml:"subclasses"`
 }
 
-func NewClass() *Class {
+func newClass() *Class {
 	return &Class{
 		Identity: Identity{
 			ID:   -1,
@@ -21,12 +22,12 @@ func NewClass() *Class {
 }
 
 func (c *Class) addSubclass(cls *Subclass) error {
-	return AddToMap(c.Subclasses, cls.ID, cls, "HWArchive.Classes.Subclasses")
+	return addToMap(c.Subclasses, cls.ID, cls, "HWArchive.Classes.Subclasses")
 }
 
 func parseClassLine(s string) (*Class, error) {
 	input := s[2:]
-	newClass := NewClass()
+	newClass := newClass()
 
 	var err error
 	newClass.Name, err = parseHexFieldsLine(input, &newClass.ID)
@@ -37,47 +38,45 @@ func parseClassLine(s string) (*Class, error) {
 	return newClass, nil
 }
 
-func readClassSection(exp *HWExplorer, hwa *HWArchive) error {
-	return readTopLevelSection[*Class, *Subclass](
-		exp,
-		hwa,
-		parseClassLine,
-		func(hwa *HWArchive, c *Class) {
-			hwa.addClass(c)
-		},
-		func(c *Class) error {
-			return readSection(
-				exp,
-				c,
-				parseSubclassLine,
-				func(parent *Class, child *Subclass) error {
-					parent.addSubclass(child)
-					return nil
-				},
-				func(line string) bool {
-					return strings.HasPrefix(line, "C ") || lineStartsWithHex(line) ||
-						(strings.HasPrefix(line, "\t") && !strings.HasPrefix(line, "\t\t"))
-				},
-				func(line string) bool {
-					return strings.HasPrefix(line, "\t\t")
-				},
-				func(sc *Subclass, line string) error {
-					progIF, err := parseProgInterfaceLine(line)
-					if err != nil {
-						return err
-					}
-					// fmt.Printf("|-------- 0x%04x %s\n", progIF.ID, progIF.Name)
-					sc.addProgIF(progIF)
-					return nil
-				},
-				func(sc *Subclass) {
-					// fmt.Printf("|---- 0x%04x %s\n", sc.ID, sc.Name)
-				},
-				func(_ *Subclass) {},
-			)
-		},
-		func(c *Class) {
-			// fmt.Printf("| 0x%04x %s\n", c.ID, c.Name)
-		},
-	)
+func parseClassBlock(classStr string, block string, hwa *HWArchive) {
+	class, err := parseClassLine(classStr)
+	if err != nil {
+		log.Fatalf("Failed to parse class `%s`: %v", classStr, err)
+	}
+	err = hwa.addClass(class)
+	if err != nil {
+		log.Fatalf("failed to add class to classes: %v", err)
+	}
+
+	scanner := bufio.NewScanner(strings.NewReader(block))
+	explorer := newHWExplorer(scanner)
+
+	for explorer.scan() {
+		line := explorer.peek()
+
+		if strings.HasPrefix(line, "\t") {
+			subclass, err := parseSubclassLine(line)
+			if err != nil {
+				log.Fatalf("Failed to parse subclass `%s`: %v", line, err)
+			}
+
+			err = class.addSubclass(subclass)
+			if err != nil {
+				log.Fatalf("failed to add class to classes: %v", err)
+			}
+			explorer.consume()
+
+			prefixChecker := func(line string) bool {
+				return strings.HasPrefix(line, "\t\t")
+			}
+			block, err := readBlock(explorer, prefixChecker)
+			if err != nil {
+				log.Fatalf("It broke here: %v", err)
+			}
+
+			parseProginterface(block, subclass)
+
+			continue
+		}
+	}
 }
